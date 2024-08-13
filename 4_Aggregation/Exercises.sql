@@ -148,3 +148,27 @@ select facid, extract(month from starttime) as month, sum(slots) as slots
 		and starttime < '2013-01-01'
 	group by rollup(facid, month)
 order by facid, month;          
+
+-- exercise 13
+-- got it except the really annoying 2 decimal places part
+-- dividing by 2.0 makes sure things are in float
+-- to_char and the horrible format string gets you to 2 dp
+-- trim gets rid of left space padding
+select facs.facid, facs.name,
+	trim(to_char(sum(bks.slots)/2.0, '9999999999999999D99')) as "Total Hours"
+
+	from cd.bookings bks
+	inner join cd.facilities facs
+		on facs.facid = bks.facid
+	group by facs.facid, facs.name
+order by facs.facid;    
+
+--- exercise 14
+--- easy peasy
+select mem.surname, mem.firstname, mem.memid, min(starttime) 
+from cd.members mem 
+left join cd.bookings bks
+on mem.memid = bks.memid
+where bks.starttime > '2012-09-01'
+group by mem.surname, mem.firstname, mem.memid
+order by memid
